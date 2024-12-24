@@ -19,7 +19,7 @@ if args.wandb:
     )
 
 trainer = pl.Trainer(
-    default_root_dir=os.environ["MODEL_DIR"],
+    default_root_dir=args.model_dir,
     accelerator="gpu" if torch.cuda.is_available() else 'auto',
     max_steps=args.max_steps,
     num_sanity_val_steps=0,
@@ -29,7 +29,7 @@ trainer = pl.Trainer(
     gradient_clip_val=args.grad_clip,
     callbacks=[
         ModelCheckpoint(
-            dirpath=os.environ["MODEL_DIR"],
+            dirpath=args.model_dir,
             save_top_k=5,
             save_last=True,
             monitor= 'val_loss' if args.val_loss_es else'val_accuracy',

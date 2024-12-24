@@ -52,7 +52,7 @@ class DNAModule(GeneralModule):
         self.stage = 'train'
         loss = self.general_step(batch, batch_idx)
         if self.args.ckpt_iterations is not None and self.trainer.global_step in self.args.ckpt_iterations:
-            self.trainer.save_checkpoint(os.path.join(os.environ["MODEL_DIR"],f"epoch={self.trainer.current_epoch}-step={self.trainer.global_step}.ckpt"))
+            self.trainer.save_checkpoint(self.args.model_dir/f"epoch={self.trainer.current_epoch}-step={self.trainer.global_step}.ckpt")
         self.try_print_log()
         return loss
 
@@ -433,7 +433,7 @@ class DNAModule(GeneralModule):
                     pil_probs, pil_score_norms = self.plot_score_and_probs()
                     wandb.log({'fig': [wandb.Image(pil_probs), wandb.Image(pil_score_norms)], 'step': float(self.trainer.global_step), 'iter_step': float(self.iter_step)})
 
-            path = os.path.join(os.environ["MODEL_DIR"], f"val_{self.trainer.global_step}.csv")
+            path = self.args.model_dir/f"val_{self.trainer.global_step}.csv"
             pd.DataFrame(log).to_csv(path)
 
         for key in list(log.keys()):

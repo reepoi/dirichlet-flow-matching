@@ -2,7 +2,7 @@ from datetime import datetime
 
 import logging, socket, os, sys
 
-model_dir = os.environ.get("MODEL_DIR", "./workdir/default")
+# model_dir = os.environ.get("MODEL_DIR", "./workdir/default")
 
 class Rank(logging.Filter):
     def filter(self, record):
@@ -21,18 +21,18 @@ def get_logger(name):
 
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
-    os.makedirs(model_dir, exist_ok=True)
-    fh = logging.FileHandler(os.path.join(model_dir, "log.out"))
-    fh.setLevel(logging.DEBUG)
+    # os.makedirs(model_dir, exist_ok=True)
+    # fh = logging.FileHandler(os.path.join(model_dir, "log.out"))
+    # fh.setLevel(logging.DEBUG)
     # formatter = logging.Formatter(f'%(asctime)s [{socket.gethostname()}:%(process)d:%(global_rank)s:%(local_rank)s]
     # [%(levelname)s] %(message)s') #  (%(name)s)
     formatter = logging.Formatter(
         f"%(asctime)s [{socket.gethostname()}:%(process)d] [%(levelname)s] %(message)s"
     )
     ch.setFormatter(formatter)
-    fh.setFormatter(formatter)
+    # fh.setFormatter(formatter)
     logger.addHandler(ch)
-    logger.addHandler(fh)
+    # logger.addHandler(fh)
     return logger
 
 def init():
@@ -42,8 +42,7 @@ def init():
         os.dup2(out_file.fileno(), 1)
         os.dup2(out_file.fileno(), 2)
 
-# if not os.getlogin() == 'anonymized': init()
-init()
+# init()
 
 class Logger(object):
     def __init__(self, logpath, syspart=sys.stdout):

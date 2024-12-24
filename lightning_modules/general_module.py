@@ -30,7 +30,7 @@ class GeneralModule(pl.LightningModule):
 
         step = self.iter_step if self.args.validate else self.trainer.global_step
         if (step + 1) % self.args.print_freq == 0:
-            print(os.environ["MODEL_DIR"])
+            print(self.args.model_dir)
             log = self._log
             log = {key: log[key] for key in log if "iter_" in key}
 
@@ -88,9 +88,7 @@ class GeneralModule(pl.LightningModule):
             if self.args.wandb:
                 wandb.log(mean_log)
 
-            path = os.path.join(
-                os.environ["MODEL_DIR"], f"val_{self.trainer.global_step}.csv"
-            )
+            path = self.args.model_dir/f"val_{self.trainer.global_step}.csv"
             pd.DataFrame(log).to_csv(path)
 
         for key in list(log.keys()):

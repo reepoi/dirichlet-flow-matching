@@ -7,12 +7,9 @@ import numpy as np
 from Bio import SeqIO
 
 
-DATA_DIR = Path('/root/workspace/out/diffusion-dynamics/dirichlet-flow-matching/data')
-
-
 class EnhancerDataset(torch.utils.data.Dataset):
     def __init__(self, args, split='train'):
-        all_data = pickle.load(open(DATA_DIR/f'enhancer/the_code/General/data/Deep{"MEL2" if args.mel_enhancer else "FlyBrain"}_data.pkl', 'rb'))
+        all_data = pickle.load(open(args.data_dir/f'enhancer/the_code/General/data/Deep{"MEL2" if args.mel_enhancer else "FlyBrain"}_data.pkl', 'rb'))
         self.seqs = torch.argmax(torch.from_numpy(copy.deepcopy(all_data[f'{split}_data'])), dim=-1)
         self.clss = torch.argmax(torch.from_numpy(copy.deepcopy(all_data[f'y_{split}'])), dim=-1)
         self.num_cls = all_data[f'y_{split}'].shape[-1]
@@ -40,7 +37,7 @@ class TwoClassOverfitDataset(torch.utils.data.IterableDataset):
             self.data_class1 = torch.stack([torch.from_numpy(np.random.choice(np.arange(self.alphabet_size), size=args.toy_seq_len, replace=True)) for _ in range(args.toy_num_seq)])
             self.data_class2 = torch.stack([torch.from_numpy(np.random.choice(np.arange(self.alphabet_size), size=args.toy_seq_len, replace=True)) for _ in range(args.toy_num_seq)])
             distribution_dict = {'data_class1': self.data_class1, 'data_class2': self.data_class2}
-        torch.save(distribution_dict, os.path.join(os.environ["MODEL_DIR"], 'overfit_dataset.pt'))
+        torch.save(distribution_dict, os.path.join(args.model_dir, 'overfit_dataset.pt'))
 
     def __len__(self):
         return 10000000000
@@ -72,7 +69,7 @@ class ToyDataset(torch.utils.data.IterableDataset):
             assert self.class_probs.sum() == 1
 
             distribution_dict = {'probs': self.probs, 'class_probs': self.class_probs}
-        torch.save(distribution_dict, os.path.join(os.environ["MODEL_DIR"], 'toy_distribution_dict.pt' ))
+        torch.save(distribution_dict, os.path.join(args.model_dir, 'toy_distribution_dict.pt' ))
 
     def __len__(self):
         return 10000000000

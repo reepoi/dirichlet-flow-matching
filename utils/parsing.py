@@ -3,12 +3,15 @@ from argparse import ArgumentParser
 import subprocess, os
 from datetime import datetime
 
-
+from pathlib import Path
 
 
 def parse_train_args():
     parser = ArgumentParser()
-    
+
+    parser.add_argument("--model_dir", type=Path, default='/root/workspace/out/diffusion-dynamics/dirichlet-flow-matching/runs')
+    parser.add_argument("--data_dir", type=Path, default='/root/workspace/out/diffusion-dynamics/dirichlet-flow-matching/data')
+
     # Run settings
     parser.add_argument("--ckpt", type=str, default=None)
     parser.add_argument("--cls_ckpt", type=str, default=None)
@@ -109,17 +112,17 @@ def parse_train_args():
     parser.add_argument("--print_freq", type=int, default=100)
     parser.add_argument("--wandb", action="store_true")
     parser.add_argument("--run_name", type=str, default="default")
-    
+
     args = parser.parse_args()
     timestamp = datetime.fromtimestamp(datetime.now().timestamp()).strftime("%Y-%m-%d_%H-%M-%S")
-    os.environ["MODEL_DIR"] = os.path.join("workdir", (args.run_name + '_' + timestamp))
+    args.model_dir = args.model_dir/f'{args.run_name}_{timestamp}'
     os.environ["WANDB_LOGGING"] = str(int(args.wandb))
 
     from utils.logging import Logger
-    os.makedirs(os.environ['MODEL_DIR'], exist_ok=True)
-    sys.stdout = Logger(logpath=os.path.join(os.environ['MODEL_DIR'], f'log.log'), syspart=sys.stdout)
+    os.makedirs(args.model_dir, exist_ok=True)
+    sys.stdout = Logger(logpath=args.model_dir/'log.log', syspart=sys.stdout)
     sys.stdout.encoding = None # for pytorch lightning because it is stupid
-    sys.stderr = Logger(logpath=os.path.join(os.environ['MODEL_DIR'], f'log.log'), syspart=sys.stderr)
+    sys.stderr = Logger(logpath=args.model_dir/'log.log', syspart=sys.stderr)
     if args.wandb:
         if subprocess.check_output(["git", "status", "-s"]):
             print('There were uncommited changes. Not running that stuff.')

@@ -25,7 +25,7 @@ class PromoterModule(GeneralModule):
         self.model = PromoterModel(args)
         self.condflow = DirichletConditionalFlow(K=self.model.alphabet_size, alpha_spacing=0.01, alpha_max=args.alpha_max)
 
-        self.seifeatures = pd.read_csv('data/promoter_design/target.sei.names', sep='|', header=None)
+        self.seifeatures = pd.read_csv(args.data_dir/'promoter/promoter_design/target.sei.names', sep='|', header=None)
         self.sei_cache = {}
         self.loaded_distill_model = False
 
@@ -36,7 +36,7 @@ class PromoterModule(GeneralModule):
         self.stage = 'train'
         loss = self.general_step(batch, batch_idx)
         if self.args.ckpt_iterations is not None and self.trainer.global_step in self.args.ckpt_iterations:
-            self.trainer.save_checkpoint(os.path.join(os.environ["MODEL_DIR"],f"epoch={self.trainer.current_epoch}-step={self.trainer.global_step}.ckpt"))
+            self.trainer.save_checkpoint(self.args.model_dir/f"epoch={self.trainer.current_epoch}-step={self.trainer.global_step}.ckpt")
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -50,7 +50,7 @@ class PromoterModule(GeneralModule):
         seq_one_hot = batch[:, :, :4]
         seq = torch.argmax(seq_one_hot, dim=-1)
         signal = batch[:, :, 4:5]
-        
+
         B, L = seq.shape
 
         if self.args.mode == 'dirichlet' or self.args.mode == 'riemannian':
@@ -237,7 +237,7 @@ class PromoterModule(GeneralModule):
             if self.args.wandb:
                 wandb.log(mean_log)
 
-            path = os.path.join(os.environ["MODEL_DIR"], f"val_{self.trainer.global_step}.csv")
+            path = self.args.model_dir/f"val_{self.trainer.global_step}.csv"
             pd.DataFrame(log).to_csv(path)
 
         for key in list(log.keys()):
