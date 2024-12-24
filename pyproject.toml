@@ -1,0 +1,87 @@
+[project]
+name = "dfm"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+]
+requires-python = ">=3.9"
+dependencies = [
+    "biopandas>=0.5.1",
+    "biopython==1.79",
+    "cooler>=0.10.2",
+    "cooltools>=0.7.1",
+    "e3nn>=0.5.4",
+    "einops>=0.8.0",
+    "fair-esm[esmfold]>=2.0.0",
+    "gpustat>=1.1.1",
+    "imageio>=2.36.1",
+    "jupyterlab>=4.3.4",
+    "lightning>=2.4.0",
+    "plotly>=5.24.1",
+    "prody==2.4.1",
+    "pybigwig>=0.3.23",
+    "pyranges>=0.1.2",
+    "pytabix>=0.1",
+    "pyyaml>=6.0.2",
+    "seaborn>=0.13.2",
+    "selene-sdk>=0.6.0",
+    "spyrmsd>=0.8.0",
+    "tmtools>=0.2.0",
+    "torch-geometric>=2.6.1",
+    "tqdm>=4.67.1",
+    "wandb>=0.19.1",
+    # uv pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cu121.html
+    # pyg-lib==0.4.0+pt23cu121
+    # torch-cluster==1.6.3+pt23cu121
+    # torch-scatter==2.1.2+pt23cu121
+    # torch-sparse==0.6.18+pt23cu121
+    # torch-spline-conv==1.2.2+pt23cu12
+]
+
+[project.scripts]
+dfm = "dfm:main"
+
+[tool.uv]
+index-strategy = "unsafe-best-match"
+link-mode = "symlink"
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch" },
+]
+torchvision = [
+  { index = "pytorch" },
+]
+torchaudio = [
+  { index = "pytorch" },
+]
+pyg_lib = [
+  { index = "pytorch-geometric" },
+]
+torch_scatter = [
+  { index = "pytorch-geometric" },
+]
+torch_cluster = [
+  { index = "pytorch-geometric" },
+]
+torch_sparse = [
+  { index = "pytorch-geometric" },
+]
+torch_spline_conv = [
+  { index = "pytorch-geometric" },
+]
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-geometric"
+url = "https://data.pyg.org/whl/torch-2.3.0+cu121.html"
+explicit = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

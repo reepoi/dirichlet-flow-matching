@@ -41,8 +41,9 @@ def init():
         out_file = open(os.path.join(model_dir, "std.out"), 'ab')
         os.dup2(out_file.fileno(), 1)
         os.dup2(out_file.fileno(), 2)
-    
-if not os.getlogin() == 'anonymized': init()
+
+# if not os.getlogin() == 'anonymized': init()
+init()
 
 class Logger(object):
     def __init__(self, logpath, syspart=sys.stdout):

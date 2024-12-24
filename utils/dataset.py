@@ -1,3 +1,4 @@
+from pathlib import Path
 import copy
 import pickle
 
@@ -6,11 +7,12 @@ import numpy as np
 from Bio import SeqIO
 
 
+DATA_DIR = Path('/root/workspace/out/diffusion-dynamics/dirichlet-flow-matching/data')
 
 
 class EnhancerDataset(torch.utils.data.Dataset):
     def __init__(self, args, split='train'):
-        all_data = pickle.load(open(f'data/the_code/General/data/Deep{"MEL2" if args.mel_enhancer else "FlyBrain"}_data.pkl', 'rb'))
+        all_data = pickle.load(open(DATA_DIR/f'enhancer/the_code/General/data/Deep{"MEL2" if args.mel_enhancer else "FlyBrain"}_data.pkl', 'rb'))
         self.seqs = torch.argmax(torch.from_numpy(copy.deepcopy(all_data[f'{split}_data'])), dim=-1)
         self.clss = torch.argmax(torch.from_numpy(copy.deepcopy(all_data[f'y_{split}'])), dim=-1)
         self.num_cls = all_data[f'y_{split}'].shape[-1]
